@@ -33,7 +33,9 @@
       "eyebrow": "Discover",
       "title": "Selected Works",
       "subtitle": "Works capable of shifting context without losing their essence",
-      "cta": "View All Artists"
+      "cta": "View All Artists",
+      "previous": "Previous artworks",
+      "next": "Next artworks"
     },
     "curatorial": {
       "eyebrow": "Our Approach",
@@ -159,7 +161,9 @@
     "contactUs": "Contact Us",
     "details": "Details",
     "detail": "detail",
-    "viewFullscreen": "View fullscreen"
+    "viewFullscreen": "View fullscreen",
+    "previousImage": "Previous images",
+    "nextImage": "Next images"
   },
   "press": {
     "hero": {
@@ -464,8 +468,20 @@
       "medium": "Medium",
       "mediumPlaceholder": "Oil on canvas",
       "dimensions": "Dimensions",
+      "dimensionType": "Dimension type",
+      "dimensionTypes": {
+        "unconfirmed": "Historical — unconfirmed",
+        "rectangular": "Rectangular",
+        "circular": "Circular"
+      },
+      "legacyDimensions": "Historical / additional dimensions",
+      "legacyDimensionsHelp": "Preserved as entered until manually verified. Select a shape to confirm structured dimensions.",
+      "preservedLegacyDimensions": "Preserved historical information",
       "widthCm": "Width (cm)",
       "heightCm": "Height (cm)",
+      "lengthCm": "Length / height (cm)",
+      "diameterCm": "Diameter (cm)",
+      "depthCm": "Depth (cm, optional)",
       "year": "Year",
       "price": "Price",
       "currency": "Currency",
@@ -569,6 +585,17 @@
       "searchPlaceholder": "Search for an artwork...",
       "newArtwork": "New artwork",
       "allArtists": "All artists",
+      "inconsistentStatus": "Inconsistent historical state: this artwork is marked both sold and reserved. Sold takes precedence until the status is corrected.",
+      "inconsistentStatusShort": "Sold + reserved",
+      "statusCommands": "Publication and status commands",
+      "filters": {
+        "title": "Filters",
+        "artist": "Filter by artist",
+        "available": "Available",
+        "reserved": "Reserved",
+        "sold": "Sold",
+        "help": "No status selected shows all inventory. Multiple statuses are combined with OR logic."
+      },
       "columns": {
         "artwork": "Artwork",
         "artist": "Artist",

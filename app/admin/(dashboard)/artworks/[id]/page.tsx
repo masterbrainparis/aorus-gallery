@@ -33,13 +33,17 @@ export default async function EditArtworkPage({ params }: Props) {
       <ArtworkForm
         action={updateWithId}
         artists={artists}
+        isExisting
         defaultValues={{
           title: artwork.title,
           artistId: artwork.artistId,
           medium: artwork.medium ?? undefined,
           dimensions: artwork.dimensions ?? '',
-          widthCm: artwork.widthCm,
-          heightCm: artwork.heightCm,
+          dimensionType: artwork.dimensionType,
+          widthCm: artwork.widthCm ? Number(artwork.widthCm) : null,
+          heightCm: artwork.heightCm ? Number(artwork.heightCm) : null,
+          diameterCm: artwork.diameterCm ? Number(artwork.diameterCm) : null,
+          depthCm: artwork.depthCm ? Number(artwork.depthCm) : null,
           year: artwork.year,
           price: artwork.price ? Number(artwork.price) : null,
           currency: artwork.currency,

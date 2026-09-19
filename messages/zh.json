@@ -33,7 +33,9 @@
       "eyebrow": "探索",
       "title": "精選作品",
       "subtitle": "能夠轉換語境而不改變本質的作品",
-      "cta": "查看所有藝術家"
+      "cta": "查看所有藝術家",
+      "previous": "上一組作品",
+      "next": "下一組作品"
     },
     "curatorial": {
       "eyebrow": "我們的方法",
@@ -159,7 +161,9 @@
     "contactUs": "聯繫我們",
     "details": "細節",
     "detail": "細節",
-    "viewFullscreen": "全屏查看"
+    "viewFullscreen": "全屏查看",
+    "previousImage": "上一組圖片",
+    "nextImage": "下一組圖片"
   },
   "press": {
     "hero": {
@@ -464,8 +468,20 @@
       "medium": "媒材",
       "mediumPlaceholder": "布面油畫",
       "dimensions": "尺寸",
+      "dimensionType": "尺寸類型",
+      "dimensionTypes": {
+        "unconfirmed": "歷史資料 — 尚未確認",
+        "rectangular": "矩形",
+        "circular": "圓形"
+      },
+      "legacyDimensions": "歷史／補充尺寸",
+      "legacyDimensionsHelp": "在人工確認前保留原始內容。選擇形狀以確認結構化尺寸。",
+      "preservedLegacyDimensions": "保留的歷史資訊",
       "widthCm": "寬度 (公分)",
       "heightCm": "高度 (公分)",
+      "lengthCm": "長度／高度 (公分)",
+      "diameterCm": "直徑 (公分)",
+      "depthCm": "深度 (公分，選填)",
       "year": "年份",
       "price": "價格",
       "currency": "幣別",
@@ -569,6 +585,17 @@
       "searchPlaceholder": "搜尋作品...",
       "newArtwork": "新增作品",
       "allArtists": "所有藝術家",
+      "inconsistentStatus": "歷史狀態不一致：此作品同時標記為已售出和已預約。在修正之前，已售出狀態優先。",
+      "inconsistentStatusShort": "已售出 + 已預約",
+      "statusCommands": "發佈與狀態操作",
+      "filters": {
+        "title": "篩選",
+        "artist": "依藝術家篩選",
+        "available": "可購買",
+        "reserved": "已預約",
+        "sold": "已售出",
+        "help": "未勾選狀態時顯示全部作品；多個狀態以 OR 邏輯組合。"
+      },
       "columns": {
         "artwork": "作品",
         "artist": "藝術家",

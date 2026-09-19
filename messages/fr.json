@@ -33,7 +33,9 @@
       "eyebrow": "Découvrir",
       "title": "Sélection d'œuvres",
       "subtitle": "Des œuvres capables de changer de contexte sans changer de nature",
-      "cta": "Voir tous les artistes"
+      "cta": "Voir tous les artistes",
+      "previous": "Œuvres précédentes",
+      "next": "Œuvres suivantes"
     },
     "curatorial": {
       "eyebrow": "Notre approche",
@@ -159,7 +161,9 @@
     "contactUs": "Nous contacter",
     "details": "Détails",
     "detail": "détail",
-    "viewFullscreen": "Agrandir"
+    "viewFullscreen": "Agrandir",
+    "previousImage": "Images précédentes",
+    "nextImage": "Images suivantes"
   },
   "press": {
     "hero": {
@@ -464,8 +468,20 @@
       "medium": "Technique",
       "mediumPlaceholder": "Huile sur toile",
       "dimensions": "Dimensions",
+      "dimensionType": "Type de dimensions",
+      "dimensionTypes": {
+        "unconfirmed": "Historique — non confirmé",
+        "rectangular": "Rectangulaire",
+        "circular": "Circulaire"
+      },
+      "legacyDimensions": "Dimensions historiques / complémentaires",
+      "legacyDimensionsHelp": "Conservées telles quelles jusqu’à une vérification manuelle. Sélectionnez une forme pour confirmer les dimensions structurées.",
+      "preservedLegacyDimensions": "Information historique conservée",
       "widthCm": "Largeur (cm)",
       "heightCm": "Hauteur (cm)",
+      "lengthCm": "Longueur / hauteur (cm)",
+      "diameterCm": "Diamètre (cm)",
+      "depthCm": "Profondeur (cm, facultatif)",
       "year": "Année",
       "price": "Prix",
       "currency": "Devise",
@@ -569,6 +585,17 @@
       "searchPlaceholder": "Rechercher une œuvre...",
       "newArtwork": "Nouvelle œuvre",
       "allArtists": "Tous les artistes",
+      "inconsistentStatus": "État historique incohérent : cette œuvre est marquée vendue et réservée. Vendue domine tant que vous ne corrigez pas le statut.",
+      "inconsistentStatusShort": "Vendue + réservée",
+      "statusCommands": "Commandes de publication et de statut",
+      "filters": {
+        "title": "Filtres",
+        "artist": "Filtrer par artiste",
+        "available": "Disponible",
+        "reserved": "Réservée",
+        "sold": "Vendue",
+        "help": "Aucun statut coché affiche tout le stock. Plusieurs statuts sont combinés avec une logique OU."
+      },
       "columns": {
         "artwork": "Œuvre",
         "artist": "Artiste",

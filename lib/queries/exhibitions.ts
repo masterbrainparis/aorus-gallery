@@ -2,6 +2,7 @@ import { db } from '@/lib/db-typed';
 import { resolveTranslation } from '@/lib/i18n-content';
 import { serializePrismaRow } from '@/lib/queries/serialize';
 import type { Locale } from '@/i18n/routing';
+import { formatArtworkDimensions } from '@/lib/artwork-dimensions';
 
 export async function getGalleryExhibitions(locale: Locale = 'en') {
   const exhibitions = await db.galleryExhibition.findMany({
@@ -40,6 +41,11 @@ export async function getExhibitionBySlugForFrontend(slug: string, locale: Local
               title: true,
               medium: true,
               dimensions: true,
+              dimensionType: true,
+              widthCm: true,
+              heightCm: true,
+              diameterCm: true,
+              depthCm: true,
               year: true,
               imageUrl: true,
               artist: { select: { name: true, slug: true } },
@@ -71,7 +77,13 @@ export async function getExhibitionBySlugForFrontend(slug: string, locale: Local
       slug: a.artwork.slug,
       title: resolveTranslation(a.artwork.title, locale),
       medium: a.artwork.medium ? resolveTranslation(a.artwork.medium, locale) : null,
-      dimensions: a.artwork.dimensions,
+      dimensions: formatArtworkDimensions({
+        ...a.artwork,
+        widthCm: a.artwork.widthCm ? Number(a.artwork.widthCm) : null,
+        heightCm: a.artwork.heightCm ? Number(a.artwork.heightCm) : null,
+        diameterCm: a.artwork.diameterCm ? Number(a.artwork.diameterCm) : null,
+        depthCm: a.artwork.depthCm ? Number(a.artwork.depthCm) : null,
+      }, locale),
       year: a.artwork.year,
       imageUrl: a.artwork.imageUrl,
       artistName: a.artwork.artist.name,

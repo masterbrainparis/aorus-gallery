@@ -9,6 +9,7 @@ import { CTAStrip } from '@/components/CTAStrip';
 import { AdaptiveImage } from '@/components/ui/adaptive-image';
 import { Lightbox } from '@/components/ui/lightbox';
 import { ArtworkHero } from '@/components/artwork-display';
+import { HorizontalRail } from '@/components/ui/horizontal-rail';
 
 interface ArtworkData {
   id: string;
@@ -16,6 +17,7 @@ interface ArtworkData {
   title: string;
   medium: string | null;
   dimensions: string | null;
+  formattedDimensions: string | null;
   year: number | null;
   price: number | null;
   currency: string;
@@ -155,10 +157,10 @@ export function ArtworkDetailClient({ artwork }: { artwork: ArtworkData }) {
             </p>
 
             {/* 3. Medium + Dimensions — single block, museum cartel style */}
-            {(artwork.medium || artwork.dimensions) && (
+            {(artwork.medium || artwork.formattedDimensions) && (
               <div className="mt-5 space-y-1 text-sm text-noir/55 tracking-wide">
                 {artwork.medium && <p>{artwork.medium}</p>}
-                {artwork.dimensions && <p>{artwork.dimensions}</p>}
+                {artwork.formattedDimensions && <p>{artwork.formattedDimensions}</p>}
               </div>
             )}
 
@@ -202,13 +204,17 @@ export function ArtworkDetailClient({ artwork }: { artwork: ArtworkData }) {
             <p className="text-or text-sm tracking-[0.2em] uppercase font-medium">{t('details')}</p>
           </div>
           <div style={{ ['--rail-h' as string]: '340px' } as React.CSSProperties}>
-            <div
-              className="relative"
-              data-testid="artwork-contextual-carousel"
-            >
+            <div className="relative">
               <div className="absolute left-0 top-0 bottom-0 w-8 md:w-16 bg-gradient-to-r from-blanc-muted to-transparent z-10 pointer-events-none" />
               <div className="absolute right-0 top-0 bottom-0 w-8 md:w-16 bg-gradient-to-l from-blanc-muted to-transparent z-10 pointer-events-none" />
-              <div className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-smooth px-4 md:px-8 lg:px-12 pb-4 cursor-grab active:cursor-grabbing">
+              <HorizontalRail
+                label={t('details')}
+                previousLabel={t('previousImage')}
+                nextLabel={t('nextImage')}
+                testId="artwork-contextual-carousel"
+                buttonClassName="bg-blanc-muted/90"
+                className="flex gap-4 md:gap-6 scrollbar-hide snap-x snap-mandatory scroll-smooth px-4 md:px-8 lg:px-12 pb-4 cursor-grab active:cursor-grabbing"
+              >
                 {artwork.images.map((image, index) => {
                   const meta = artwork.imagesMeta[index];
                   const w = meta?.width ?? null;
@@ -241,7 +247,7 @@ export function ArtworkDetailClient({ artwork }: { artwork: ArtworkData }) {
                     </motion.button>
                   );
                 })}
-              </div>
+              </HorizontalRail>
             </div>
           </div>
         </AnimatedSection>

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
 import { ArrowLeft, Printer, Package, Download } from 'lucide-react';
+import { formatArtworkDimensions, type ArtworkDimensionType } from '@/lib/artwork-dimensions';
 
 const GOLD = '#B59060';
 
@@ -14,8 +15,11 @@ export interface InventoryArtwork {
   year: number | null;
   medium: string | null;
   dimensions: string | null;
+  dimensionType: ArtworkDimensionType;
   widthCm: number | null;
   heightCm: number | null;
+  diameterCm: number | null;
+  depthCm: number | null;
   price: number | null;
   currency: string;
   imageUrl: string;
@@ -152,8 +156,7 @@ export function ArtistInventoryClient({ artist, artworks }: Props) {
               <tbody className="divide-y divide-gray-100">
                 {artworks.map((aw) => {
                   const status = statusFor(aw, t);
-                  const dims = aw.dimensions
-                    || (aw.widthCm && aw.heightCm ? `${aw.widthCm} × ${aw.heightCm} cm` : '—');
+                  const dims = formatArtworkDimensions(aw, locale) ?? '—';
                   return (
                     <tr key={aw.id} className="inventory-row hover:bg-gray-50 print:hover:bg-white">
                       <td className="px-4 py-3">

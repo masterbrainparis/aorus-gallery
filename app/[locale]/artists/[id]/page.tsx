@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: OG_LOCALE[locale],
       images: artist.image
         ? [{ url: artist.image, alt: artist.name }]
-        : [{ url: '/images/gallery/logo.jpeg', width: 800, height: 800, alt: 'ORUS Gallery' }],
+        : [{ url: '/opengraph-image.png', width: 1200, height: 630, alt: 'ORUS Gallery' }],
     },
     twitter: { card: 'summary_large_image' as const },
   };

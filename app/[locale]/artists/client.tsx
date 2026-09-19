@@ -34,7 +34,7 @@ export function ArtistsPageClient({ artists }: { artists: Artist[] }) {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="container-wide"
         >
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {artists.map((artist, index) => (
               <motion.div
                 key={artist.id}
@@ -48,7 +48,7 @@ export function ArtistsPageClient({ artists }: { artists: Artist[] }) {
                       src={artist.image}
                       alt={artist.name}
                       fill
-                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, (max-width: 1279px) 25vw, 20vw"
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-noir/60 via-noir/30 to-transparent" />

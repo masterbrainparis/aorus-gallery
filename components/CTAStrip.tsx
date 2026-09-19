@@ -9,11 +9,24 @@ interface CTAStripProps {
   primaryLink: { href: string; label: string };
   secondaryLink?: { href: string; label: string };
   locationTag?: string;
+  sectionClassName?: string;
 }
 
-export function CTAStrip({ title, text, primaryLink, secondaryLink, locationTag }: CTAStripProps) {
+export function CTAStrip({
+  title,
+  text,
+  primaryLink,
+  secondaryLink,
+  locationTag,
+  sectionClassName,
+}: CTAStripProps) {
   return (
-    <AnimatedSection bg="blanc-muted" container="narrow" containerClassName="text-center">
+    <AnimatedSection
+      bg="blanc-muted"
+      container="narrow"
+      className={sectionClassName}
+      containerClassName="text-center"
+    >
       {title && (
         <h2 className="font-display text-2xl md:text-3xl text-noir mb-6">{title}</h2>
       )}
