@@ -1,5 +1,6 @@
 import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import type { Locale } from '@/i18n/routing';
+import { formatArtworkDimensions, type ArtworkDimensionType } from '@/lib/artwork-dimensions';
 
 // Fonts : PDF built-in uniquement (Times-Roman / Helvetica). Pas de TTF
 // custom à charger côté serveur → zéro risque de path resolution sur Vercel
@@ -8,7 +9,6 @@ import type { Locale } from '@/i18n/routing';
 // vers Cormorant possible en v2 via @react-pdf Font.register + TTF bundlé
 // dans `lib/fonts/` (commité comme code).
 const FONT_DISPLAY = 'Times-Roman';
-const FONT_DISPLAY_BOLD = 'Times-Bold';
 const FONT_BODY = 'Helvetica';
 const FONT_BODY_BOLD = 'Helvetica-Bold';
 
@@ -137,8 +137,11 @@ export interface PdfArtwork {
   year: number | null;
   medium: string | null;
   dimensions: string | null;
+  dimensionType: ArtworkDimensionType;
   widthCm: number | null;
   heightCm: number | null;
+  diameterCm: number | null;
+  depthCm: number | null;
   price: number | null;
   currency: string;
   imageUrl: string;
@@ -226,10 +229,8 @@ function statusOf(aw: PdfArtwork, s: I18nStrings['status']): { label: string; st
   return { label: s.available, styleKey: 'statusAvailable' };
 }
 
-function dimensionsOf(aw: PdfArtwork): string {
-  if (aw.dimensions) return aw.dimensions;
-  if (aw.widthCm && aw.heightCm) return `${aw.widthCm} × ${aw.heightCm} cm`;
-  return '—';
+function dimensionsOf(aw: PdfArtwork, locale: Locale): string {
+  return formatArtworkDimensions(aw, locale) ?? '—';
 }
 
 export function ArtistInventoryPdf({
@@ -299,7 +300,7 @@ export function ArtistInventoryPdf({
                 </View>
                 <Text style={[styles.colYear, styles.bodyText]}>{aw.year ?? '—'}</Text>
                 <Text style={[styles.colMedium, styles.bodyText]}>{aw.medium || '—'}</Text>
-                <Text style={[styles.colDimensions, styles.bodyText]}>{dimensionsOf(aw)}</Text>
+                <Text style={[styles.colDimensions, styles.bodyText]}>{dimensionsOf(aw, locale)}</Text>
                 <Text style={[styles.colPrice, styles.priceText]}>{formatPrice(aw.price, aw.currency, locale)}</Text>
                 <View style={styles.colStatus}>
                   <Text style={[styles.statusPill, styles[status.styleKey]]}>{status.label}</Text>

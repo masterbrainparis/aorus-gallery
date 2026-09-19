@@ -90,6 +90,12 @@ enum GalleryExhibitionType {
   OFFSITE
 }
 
+enum ArtworkDimensionType {
+  UNCONFIRMED
+  RECTANGULAR
+  CIRCULAR
+}
+
 enum GalleryExhibitionStatus {
   CURRENT
   UPCOMING
@@ -160,8 +166,11 @@ model Artwork {
   title        Json
   medium       Json?
   dimensions   String?
-  widthCm      Int?
-  heightCm     Int?
+  dimensionType ArtworkDimensionType @default(UNCONFIRMED)
+  widthCm      Decimal? @db.Decimal(10, 2)
+  heightCm     Decimal? @db.Decimal(10, 2)
+  diameterCm   Decimal? @db.Decimal(10, 2)
+  depthCm      Decimal? @db.Decimal(10, 2)
   year         Int?
   price        Decimal? @db.Decimal(10, 2)
   currency     String   @default("EUR")

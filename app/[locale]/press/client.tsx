@@ -98,11 +98,16 @@ export function PressPageClient({ articles }: { articles: PressArticle[] }) {
 
   return (
     <div className="flex flex-col">
-      <PageHero title={t('hero.title')} subtitle={t('hero.subtitle')} dividerClassName="mt-10" />
+      <PageHero
+        title={t('hero.title')}
+        subtitle={t('hero.subtitle')}
+        className="!pt-20 md:!pt-24 lg:!pt-24 !pb-6 md:!pb-8 lg:!pb-8"
+        dividerClassName="mt-6 md:mt-7"
+      />
 
       {articles.length > 0 ? (
         <section
-          className="bg-blanc relative section-padding-lg"
+          className="bg-blanc relative pt-4 md:pt-6 lg:pt-8 pb-14 md:pb-16 lg:pb-20 px-4 md:px-8 lg:px-12"
           aria-label={t('hero.title')}
         >
           {/* Edge gradients */}
@@ -111,7 +116,7 @@ export function PressPageClient({ articles }: { articles: PressArticle[] }) {
 
           {/* Year marker — shifts elegantly with active card */}
           {yearLabel && (
-            <div className="container-wide flex items-baseline gap-6 mb-12 px-6 md:px-12">
+            <div className="container-wide flex items-baseline gap-6 mb-6 md:mb-8 px-6 md:px-12">
               <p className="text-[0.7rem] tracking-[0.3em] uppercase text-noir/50 font-medium">
                 {t('coverage.eyebrow')}
               </p>
@@ -140,7 +145,7 @@ export function PressPageClient({ articles }: { articles: PressArticle[] }) {
           >
             {articles.map((article, index) => {
               const titleNode = (
-                <h3 className="font-display text-2xl md:text-3xl text-noir leading-[1.2] tracking-wide">
+                <h3 className="font-display text-2xl md:text-3xl text-noir leading-[1.18] tracking-wide">
                   {article.title}
                 </h3>
               );
@@ -156,7 +161,7 @@ export function PressPageClient({ articles }: { articles: PressArticle[] }) {
                   aria-label={`${index + 1} / ${articles.length}`}
                 >
                   {article.imageUrl ? (
-                    <div className="aspect-[4/5] relative overflow-hidden bg-blanc-muted">
+                    <div className="aspect-[16/10] relative overflow-hidden bg-blanc-muted">
                       <Image
                         src={article.imageUrl}
                         alt={article.title}
@@ -166,7 +171,7 @@ export function PressPageClient({ articles }: { articles: PressArticle[] }) {
                       />
                     </div>
                   ) : (
-                    <div className="aspect-[4/5] relative bg-blanc-muted flex items-center justify-center">
+                    <div className="aspect-[16/10] relative bg-blanc-muted flex items-center justify-center">
                       <span
                         className="font-display italic text-noir/30 text-2xl tracking-wide"
                         style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}
@@ -176,14 +181,14 @@ export function PressPageClient({ articles }: { articles: PressArticle[] }) {
                     </div>
                   )}
 
-                  <div className="mt-6 md:mt-8 flex-1 flex flex-col">
+                  <div className="mt-5 md:mt-6 flex-1 flex flex-col">
                     <p className="text-[0.7rem] tracking-[0.25em] uppercase text-noir/55">
                       <span className="text-noir font-medium">{article.publication}</span>
                       <span className="text-noir/30 mx-3">/</span>
                       <span className="text-noir/65">{formatDate(article.publishedAt)}</span>
                     </p>
 
-                    <div className="mt-5">
+                    <div className="mt-3.5 md:mt-4">
                       {article.url ? (
                         <a
                           href={article.url}
@@ -202,7 +207,7 @@ export function PressPageClient({ articles }: { articles: PressArticle[] }) {
 
                     {article.excerpt && (
                       <div
-                        className="text-noir/65 text-sm md:text-base leading-relaxed font-body mt-5 line-clamp-4"
+                        className="text-noir/65 text-sm md:text-base leading-relaxed font-body mt-4 line-clamp-3"
                         dangerouslySetInnerHTML={{ __html: article.excerpt }}
                       />
                     )}
@@ -212,7 +217,7 @@ export function PressPageClient({ articles }: { articles: PressArticle[] }) {
                         href={article.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group mt-auto pt-8 inline-flex self-start items-center gap-2 border-b border-noir/40 pb-1.5 text-[0.7rem] tracking-[0.25em] uppercase text-noir hover:border-or hover:text-or transition-colors duration-300"
+                        className="group mt-auto pt-6 inline-flex self-start items-center gap-2 border-b border-noir/40 pb-1.5 text-[0.7rem] tracking-[0.25em] uppercase text-noir hover:border-or hover:text-or transition-colors duration-300"
                       >
                         {t('readArticle')}
                         <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">→</span>
@@ -225,7 +230,7 @@ export function PressPageClient({ articles }: { articles: PressArticle[] }) {
           </div>
 
           {/* Timeline + arrows */}
-          <div className="container-wide mt-12 px-6 md:px-12 flex items-center gap-6 md:gap-10">
+          <div className="container-wide mt-8 md:mt-10 px-6 md:px-12 flex items-center gap-6 md:gap-10">
             <button
               type="button"
               onClick={() => scrollToIndex(Math.max(activeIndex - 1, 0))}

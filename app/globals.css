@@ -279,6 +279,73 @@ html {
     @apply text-base leading-relaxed;
   }
 
+  /* Rich text from the artist biography editor. Kept deliberately scoped so
+     Tiptap paragraphs do not change typography or spacing elsewhere. */
+  .artist-rich-text > :first-child {
+    margin-top: 0;
+  }
+
+  .artist-rich-text > :last-child {
+    margin-bottom: 0;
+  }
+
+  .artist-rich-text p {
+    font-size: inherit;
+    line-height: inherit;
+  }
+
+  .artist-rich-text p + p {
+    margin-top: 1.25em;
+  }
+
+  .artist-rich-text p:empty {
+    display: none;
+  }
+
+  .artist-rich-text :is(ul, ol) {
+    margin-block: 1.25em;
+    padding-left: 1.5em;
+  }
+
+  .artist-rich-text ul {
+    list-style: disc;
+  }
+
+  .artist-rich-text ol {
+    list-style: decimal;
+  }
+
+  .artist-rich-text li + li {
+    margin-top: 0.5em;
+  }
+
+  .artist-rich-text a {
+    color: var(--color-jade-dark);
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  .artist-rich-text strong {
+    font-weight: 600;
+  }
+
+  .artist-rich-text em {
+    font-style: italic;
+  }
+
+  .artist-rich-text :is(h2, h3) {
+    margin-top: 1.5em;
+    margin-bottom: 0.625em;
+  }
+
+  .artist-rich-text blockquote {
+    margin-block: 1.25em;
+    border-left: 1px solid var(--color-jade);
+    padding-left: 1.25em;
+    color: var(--color-stone);
+  }
+
   /* ===== BUTTON COMPONENTS ===== */
 
   .btn-primary {

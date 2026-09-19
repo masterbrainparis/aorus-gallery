@@ -2,6 +2,7 @@ import { db } from '@/lib/db-typed';
 import { notFound } from 'next/navigation';
 import { resolveTranslation } from '@/lib/i18n-content';
 import { ArtworkViewClient } from './client';
+import { formatArtworkDimensions } from '@/lib/artwork-dimensions';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -22,7 +23,13 @@ export default async function ArtworkViewPage({ params }: Props) {
     slug: artwork.slug,
     title: resolveTranslation(artwork.title, 'fr'),
     medium: artwork.medium ? resolveTranslation(artwork.medium, 'fr') : null,
-    dimensions: artwork.dimensions,
+    dimensions: formatArtworkDimensions({
+      ...artwork,
+      widthCm: artwork.widthCm ? Number(artwork.widthCm) : null,
+      heightCm: artwork.heightCm ? Number(artwork.heightCm) : null,
+      diameterCm: artwork.diameterCm ? Number(artwork.diameterCm) : null,
+      depthCm: artwork.depthCm ? Number(artwork.depthCm) : null,
+    }, 'fr'),
     year: artwork.year,
     price: artwork.price ? Number(artwork.price) : null,
     currency: artwork.currency,

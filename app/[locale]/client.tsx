@@ -8,6 +8,7 @@ import { Target, Clock, Globe } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { CTAStrip } from '@/components/CTAStrip';
 import { AdaptiveImage } from '@/components/ui/adaptive-image';
+import { HorizontalRail } from '@/components/ui/horizontal-rail';
 
 const valueIcons = [Target, Clock, Globe];
 
@@ -64,7 +65,7 @@ export function HomePageClient({ featuredArtworks, featuredArtists, banner }: { 
   ) : null;
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col overflow-x-clip">
       {/* ===== BLOCK 1 — HERO =====
           Watermark logo subtil (5% opacity) + texte par-dessus. Sizing en
           `vmin` pour stabilité absolue : la taille suit la plus petite
@@ -74,7 +75,7 @@ export function HomePageClient({ featuredArtworks, featuredArtists, banner }: { 
           desktop réduite encore instable malgré clamp(vw)). Borne haute via
           `min()` pour cap desktop large. Carré 1:1 strict (aspect-square)
           → aucun reflow possible. */}
-      <section className="bg-blanc min-h-[100svh] md:min-h-screen flex items-center justify-center relative overflow-x-clip">
+      <section className="bg-blanc min-h-[100svh] md:min-h-screen flex items-center justify-center relative">
         <div className="absolute inset-0">
           <div className="absolute inset-0 flex items-center justify-center">
             <Image
@@ -82,7 +83,7 @@ export function HomePageClient({ featuredArtworks, featuredArtists, banner }: { 
               alt=""
               width={720}
               height={720}
-              className="w-[min(78vw,70vh)] sm:w-[min(70vmin,720px)] aspect-square opacity-[0.05] object-contain"
+              className="w-[min(78vw,70vh)] md:w-[min(70vmin,720px)] aspect-square opacity-[0.05] object-contain"
               aria-hidden="true"
               priority
             />
@@ -92,7 +93,7 @@ export function HomePageClient({ featuredArtworks, featuredArtists, banner }: { 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-10 w-full max-w-[calc(100vw-2rem)] text-center px-2 sm:px-6"
+          className="relative z-10 w-full min-w-0 max-w-[calc(100vw-2rem)] mx-auto text-center px-2 sm:px-6"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -185,7 +186,13 @@ export function HomePageClient({ featuredArtworks, featuredArtists, banner }: { 
             <div className="relative">
               <div className="absolute left-0 top-0 bottom-0 w-12 md:w-20 bg-gradient-to-r from-blanc to-transparent z-10 pointer-events-none" />
               <div className="absolute right-0 top-0 bottom-0 w-12 md:w-20 bg-gradient-to-l from-blanc to-transparent z-10 pointer-events-none" />
-              <div className="flex gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-smooth px-6 md:px-12 lg:px-20">
+              <HorizontalRail
+                label={t('gallery.title')}
+                previousLabel={t('gallery.previous')}
+                nextLabel={t('gallery.next')}
+                testId="home-featured-rail"
+                className="flex gap-6 scrollbar-hide snap-x snap-mandatory scroll-smooth px-6 md:px-12 lg:px-20"
+              >
                 {featuredArtworks.slice(0, 10).map((artwork, index) => (
                   <motion.div
                     key={artwork.id}
@@ -217,7 +224,7 @@ export function HomePageClient({ featuredArtworks, featuredArtists, banner }: { 
                     </Link>
                   </motion.div>
                 ))}
-              </div>
+              </HorizontalRail>
             </div>
             <div className="text-center mt-16">
               <Link

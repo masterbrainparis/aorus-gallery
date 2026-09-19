@@ -2,6 +2,9 @@ import { db } from '@/lib/db-typed';
 import { resolveTranslation } from '@/lib/i18n-content';
 import { serializePrismaPage } from '@/lib/queries/serialize';
 import type { Locale } from '@/i18n/routing';
+import { ARTWORK_STATUSES, type ArtworkStatusFilter } from '@/lib/artwork-status';
+import { formatArtworkDimensions } from '@/lib/artwork-dimensions';
+import { prepareArtworkAdminPage } from '@/lib/artwork-admin-list';
 
 export async function getFeaturedArtworks(locale: Locale = 'en') {
   const artworks = await db.artwork.findMany({
@@ -39,37 +42,52 @@ export interface PaginatedResult<T> {
 }
 
 /** Get all artworks for admin with artist name — serializes Decimal to number */
-export async function getAllArtworksAdmin(
-  page: number = 1,
-  pageSize: number = 20,
-  artistId?: string,
-) {
-  const where = artistId ? { artistId } : {};
+export interface ArtworkAdminListOptions {
+  page?: number;
+  pageSize?: number;
+  artistId?: string;
+  statuses?: ArtworkStatusFilter[];
+  query?: string;
+  sort?: 'title' | 'artist' | 'price';
+  direction?: 'asc' | 'desc';
+}
 
-  const [artworks, total] = await Promise.all([
-    db.artwork.findMany({
-      where,
-      orderBy: [{ artist: { name: 'asc' } }, { sortOrder: 'asc' }],
-      include: {
-        artist: { select: { name: true, slug: true } },
-      },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-    }),
-    db.artwork.count({ where }),
-  ]);
+export async function getAllArtworksAdmin(options: ArtworkAdminListOptions = {}) {
+  const statuses = (options.statuses ?? []).filter((status) => ARTWORK_STATUSES.includes(status));
+
+  const artworks = await db.artwork.findMany({
+    orderBy: [{ artist: { name: 'asc' } }, { sortOrder: 'asc' }],
+    include: {
+      artist: { select: { name: true, slug: true } },
+    },
+  });
+
+  const prepared = prepareArtworkAdminPage(artworks, { ...options, statuses });
 
   // serializePrismaPage handles Decimal → number coercion + strips the
   // nodejs.util.inspect.custom symbol that Prisma 7 attaches to model instances.
   // The runtime shape has price as number; cast the type explicitly since TS
   // can't infer through the recursive cleaner.
-  type AdminArtworkRow = Omit<(typeof artworks)[number], 'price'> & { price: number | null };
+  type AdminArtworkRow = Omit<
+    (typeof artworks)[number],
+    'price' | 'widthCm' | 'heightCm' | 'diameterCm' | 'depthCm'
+  > & {
+    price: number | null;
+    widthCm: number | null;
+    heightCm: number | null;
+    diameterCm: number | null;
+    depthCm: number | null;
+  };
   const page_ = serializePrismaPage({
-    items: artworks,
-    total,
-    page,
-    pageSize,
-    totalPages: Math.ceil(total / pageSize),
+    ...prepared,
+    items: prepared.items.map((artwork) => ({
+      ...artwork,
+      price: artwork.price == null ? null : Number(artwork.price),
+      widthCm: artwork.widthCm == null ? null : Number(artwork.widthCm),
+      heightCm: artwork.heightCm == null ? null : Number(artwork.heightCm),
+      diameterCm: artwork.diameterCm == null ? null : Number(artwork.diameterCm),
+      depthCm: artwork.depthCm == null ? null : Number(artwork.depthCm),
+    })),
   });
   return { ...page_, items: page_.items as unknown as AdminArtworkRow[] };
 }
@@ -126,6 +144,18 @@ export async function getArtworkBySlugForFrontend(slug: string, locale: Locale =
     title: resolveTranslation(artwork.title, locale),
     medium: artwork.medium ? resolveTranslation(artwork.medium, locale) : null,
     dimensions: artwork.dimensions,
+    dimensionType: artwork.dimensionType,
+    widthCm: artwork.widthCm ? Number(artwork.widthCm) : null,
+    heightCm: artwork.heightCm ? Number(artwork.heightCm) : null,
+    diameterCm: artwork.diameterCm ? Number(artwork.diameterCm) : null,
+    depthCm: artwork.depthCm ? Number(artwork.depthCm) : null,
+    formattedDimensions: formatArtworkDimensions({
+      ...artwork,
+      widthCm: artwork.widthCm ? Number(artwork.widthCm) : null,
+      heightCm: artwork.heightCm ? Number(artwork.heightCm) : null,
+      diameterCm: artwork.diameterCm ? Number(artwork.diameterCm) : null,
+      depthCm: artwork.depthCm ? Number(artwork.depthCm) : null,
+    }, locale),
     year: artwork.year,
     price: artwork.showPrice && artwork.price ? Number(artwork.price) : null,
     currency: artwork.currency,

@@ -13,17 +13,24 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { FormCard } from './form-card';
 import { FormLayout } from './form-layout';
+import { ArtworkDimensionsFields } from './artwork-dimensions-fields';
+import { ArtworkStatusFields } from './artwork-status-fields';
+import type { ArtworkDimensionType } from '@/lib/artwork-dimensions';
 
 interface ArtworkFormProps {
   action: (formData: FormData) => Promise<{ error: string } | void>;
   artists: { id: string; name: string }[];
+  isExisting?: boolean;
   defaultValues?: {
     title?: TranslatableField;
     artistId?: string;
     medium?: TranslatableField;
     dimensions?: string;
+    dimensionType?: ArtworkDimensionType;
     widthCm?: number | null;
     heightCm?: number | null;
+    diameterCm?: number | null;
+    depthCm?: number | null;
     year?: number | null;
     price?: number | null;
     currency?: string;
@@ -40,7 +47,7 @@ interface ArtworkFormProps {
   };
 }
 
-export function ArtworkForm({ action, artists, defaultValues = {} }: ArtworkFormProps) {
+export function ArtworkForm({ action, artists, isExisting = false, defaultValues = {} }: ArtworkFormProps) {
   const t = useTranslations('admin');
   const artistOptions = artists.map((a) => ({ value: a.id, label: a.name }));
 
@@ -63,29 +70,23 @@ export function ArtworkForm({ action, artists, defaultValues = {} }: ArtworkForm
             placeholder={t('forms.selectArtist')}
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <TranslatableInput
-              name="medium"
-              label={t('forms.medium')}
-              defaultValue={defaultValues.medium}
-              placeholder={t('forms.mediumPlaceholder')}
-            />
-            <div>
-              <Label htmlFor="dimensions" className="text-sm font-medium text-gray-700 mb-1.5">{t('forms.dimensions')}</Label>
-              <Input id="dimensions" name="dimensions" defaultValue={defaultValues.dimensions ?? ''} placeholder="120 x 90 cm" />
-            </div>
-          </div>
+          <TranslatableInput
+            name="medium"
+            label={t('forms.medium')}
+            defaultValue={defaultValues.medium}
+            placeholder={t('forms.mediumPlaceholder')}
+          />
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="widthCm" className="text-sm font-medium text-gray-700 mb-1.5">{t('forms.widthCm')}</Label>
-              <Input id="widthCm" name="widthCm" type="number" min="1" step="1" defaultValue={defaultValues.widthCm ?? ''} placeholder="90" />
-            </div>
-            <div>
-              <Label htmlFor="heightCm" className="text-sm font-medium text-gray-700 mb-1.5">{t('forms.heightCm')}</Label>
-              <Input id="heightCm" name="heightCm" type="number" min="1" step="1" defaultValue={defaultValues.heightCm ?? ''} placeholder="120" />
-            </div>
-          </div>
+          <ArtworkDimensionsFields
+            defaultValues={{
+              dimensionType: defaultValues.dimensionType,
+              dimensions: defaultValues.dimensions,
+              widthCm: defaultValues.widthCm,
+              heightCm: defaultValues.heightCm,
+              diameterCm: defaultValues.diameterCm,
+              depthCm: defaultValues.depthCm,
+            }}
+          />
       </FormCard>
 
       <FormCard title={t('cards.pricing')}>
@@ -133,9 +134,12 @@ export function ArtworkForm({ action, artists, defaultValues = {} }: ArtworkForm
             <FormSwitch name="visible" label={t('forms.visible')} defaultChecked={defaultValues.visible ?? true} />
             <FormSwitch name="featuredHome" label={t('forms.featuredHome')} defaultChecked={defaultValues.featuredHome ?? false} />
             <FormSwitch name="showPrice" label={t('forms.showPrice')} defaultChecked={defaultValues.showPrice ?? false} />
-            <FormSwitch name="sold" label={t('forms.sold')} defaultChecked={defaultValues.sold ?? false} />
-            <FormSwitch name="reserved" label={t('forms.reserved')} defaultChecked={defaultValues.reserved ?? false} />
           </div>
+          <ArtworkStatusFields
+            defaultSold={defaultValues.sold ?? false}
+            defaultReserved={defaultValues.reserved ?? false}
+            isExisting={isExisting}
+          />
       </FormCard>
 
       <FormCard title={t('cards.contextImages')}>

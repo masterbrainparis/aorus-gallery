@@ -2,6 +2,7 @@ import { db } from '@/lib/db-typed';
 import { notFound } from 'next/navigation';
 import { resolveTranslation } from '@/lib/i18n-content';
 import { ArtistViewClient } from './client';
+import { formatArtworkDimensions } from '@/lib/artwork-dimensions';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -37,7 +38,13 @@ export default async function ArtistViewPage({ params }: Props) {
     artworks: artist.artworks.map(aw => ({
       title: resolveTranslation(aw.title, 'fr'),
       medium: aw.medium ? resolveTranslation(aw.medium, 'fr') : null,
-      dimensions: aw.dimensions,
+      dimensions: formatArtworkDimensions({
+        ...aw,
+        widthCm: aw.widthCm ? Number(aw.widthCm) : null,
+        heightCm: aw.heightCm ? Number(aw.heightCm) : null,
+        diameterCm: aw.diameterCm ? Number(aw.diameterCm) : null,
+        depthCm: aw.depthCm ? Number(aw.depthCm) : null,
+      }, 'fr'),
       year: aw.year,
       imageUrl: aw.imageUrl,
     })),

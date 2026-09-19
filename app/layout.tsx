@@ -34,13 +34,20 @@ export const metadata: Metadata = {
     'memory',
     'identity',
   ],
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '16x16 32x32 48x48' },
+      { url: '/icon.png', type: 'image/png', sizes: '512x512' },
+    ],
+    apple: [{ url: '/apple-icon.png', type: 'image/png', sizes: '180x180' }],
+  },
   openGraph: {
     title: 'ORUS Gallery',
     description: 'Contemporary Art | Taiwan — Paris | Origin + Us',
     type: 'website',
     locale: 'en_US',
     alternateLocale: ['fr_FR', 'zh_TW'],
-    images: [{ url: '/images/gallery/logo.jpeg', width: 800, height: 800, alt: 'ORUS Gallery' }],
+    images: [{ url: '/opengraph-image.png', width: 1200, height: 630, alt: 'ORUS Gallery' }],
   },
   twitter: {
     card: 'summary_large_image',

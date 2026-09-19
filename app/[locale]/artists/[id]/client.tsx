@@ -6,7 +6,8 @@ import { Link } from '@/i18n/navigation';
 import Image from 'next/image';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { CTAStrip } from '@/components/CTAStrip';
-import { ArtworkSalon, type ArtworkMedia } from '@/components/artwork-display';
+import type { ArtworkMedia } from '@/components/artwork-display';
+import { ArtworkSalon } from '@/components/artwork-salon';
 
 interface Artwork {
   id: string;
@@ -16,6 +17,7 @@ interface Artwork {
   dimensions: string | null;
   widthCm: number | null;
   heightCm: number | null;
+  formattedDimensions: string | null;
   imageUrl: string;
   imageWidth: number | null;
   imageHeight: number | null;
@@ -60,9 +62,9 @@ export function ArtistDetailClient({ artist }: { artist: Artist }) {
   return (
     <div className="flex flex-col">
       {/* ── Section 1: Hero Cover ── */}
-      <section className="bg-blanc min-h-[70vh] flex flex-col">
+      <section className="bg-blanc">
         {/* Back link */}
-        <div className="px-edge pt-28 md:pt-32 lg:pt-36">
+        <div className="px-edge pt-24 md:pt-28">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -86,12 +88,12 @@ export function ArtistDetailClient({ artist }: { artist: Artist }) {
         </div>
 
         {/* Hero content */}
-        <div className="flex-1 flex items-center px-edge pb-16 md:pb-24">
+        <div className="px-edge pt-8 md:pt-6 pb-12 md:pb-16 lg:pb-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2 }}
-            className="container-wide grid md:grid-cols-3 gap-12 md:gap-16 lg:gap-20 items-center w-full"
+            className="container-wide grid md:grid-cols-3 gap-8 md:gap-12 lg:gap-16 items-center w-full"
           >
             {/* Artist portrait */}
             <div className="md:col-span-1">
@@ -112,7 +114,7 @@ export function ArtistDetailClient({ artist }: { artist: Artist }) {
               <h1 className="font-display text-5xl md:text-7xl text-noir tracking-wide leading-[1.05]">
                 {artist.name}
               </h1>
-              <div className="divider-gold-wide mt-8 mb-6" />
+              <div className="divider-gold-wide mt-6 mb-4 md:mt-8 md:mb-6" />
               <p className="text-jade text-sm tracking-[0.2em] uppercase font-medium">
                 {artist.nationality}
               </p>
@@ -125,34 +127,35 @@ export function ArtistDetailClient({ artist }: { artist: Artist }) {
       <AnimatedSection
         bg="blanc-muted"
         container={false}
-        className="py-24 md:py-32"
+        className="py-12 md:py-14 lg:py-16"
         initial={{ opacity: 0, y: 40 }}
         transition={{ duration: 1 }}
         viewportMargin="-100px"
       >
         <div className="max-w-3xl mx-auto px-6">
-          <div className="divider-gold-wide mx-auto mb-10" />
-          <p className="text-jade text-xs tracking-[0.25em] uppercase font-medium text-center mb-10">
+          <div className="divider-gold-wide mx-auto mb-6" />
+          <p className="text-jade text-xs tracking-[0.25em] uppercase font-medium text-center mb-8">
             {t('biography')}
           </p>
           <div
-            className="text-noir/70 text-lg leading-loose font-body"
+            className="artist-rich-text text-noir/70 text-base md:text-lg leading-relaxed md:leading-loose font-body"
             dangerouslySetInnerHTML={{ __html: artist.bio }}
           />
-          <div className="divider-gold-wide mx-auto mt-10" />
+          <div className="divider-gold-wide mx-auto mt-8" />
         </div>
       </AnimatedSection>
 
       {/* ── Section 3: Selected Works ── */}
       <AnimatedSection
         bg="blanc"
-        container="wide"
-        className="py-24 md:py-32"
+        container={false}
+        containerClassName="w-full"
+        className="py-16 md:py-20"
         initial={{ opacity: 0, y: 40 }}
         transition={{ duration: 1 }}
         viewportMargin="-100px"
       >
-        <div className="text-center mb-16 md:mb-20">
+        <div className="text-center mb-10 md:mb-12">
           <p className="text-jade text-xs tracking-[0.25em] uppercase font-medium mb-4">
             {t('works')}
           </p>
@@ -171,6 +174,7 @@ export function ArtistDetailClient({ artist }: { artist: Artist }) {
               imageHeight: artwork.imageHeight,
               widthCm: artwork.widthCm,
               heightCm: artwork.heightCm,
+              dimensionsLabel: artwork.formattedDimensions,
               caption: artwork.medium ?? undefined,
               href: `/artworks/${artwork.slug}`,
             }))}
@@ -181,7 +185,7 @@ export function ArtistDetailClient({ artist }: { artist: Artist }) {
             )}
           />
         ) : (
-          <div className="text-center py-16">
+          <div className="text-center py-12">
             <p className="text-noir/50 text-sm tracking-[0.1em] uppercase">
               {t('works')} — {t('comingSoon')}
             </p>
@@ -194,12 +198,12 @@ export function ArtistDetailClient({ artist }: { artist: Artist }) {
         <AnimatedSection
           bg="blanc-muted"
           container="wide"
-          className="py-24 md:py-32"
+          className="py-12 md:py-16"
           initial={{ opacity: 0, y: 40 }}
           transition={{ duration: 1 }}
           viewportMargin="-100px"
         >
-          <div className="text-center mb-16 md:mb-20">
+          <div className="text-center mb-10 md:mb-12">
             <p className="text-jade text-xs tracking-[0.25em] uppercase font-medium mb-4">
               {t('cv')}
             </p>
@@ -208,13 +212,13 @@ export function ArtistDetailClient({ artist }: { artist: Artist }) {
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 md:gap-16">
+          <div className="grid md:grid-cols-2 gap-10 md:gap-12">
             {cvSections.map((section) => (
               <div key={section.key}>
-                <h3 className="font-display text-xl md:text-2xl text-jade tracking-wide mb-6">
+                <h3 className="font-display text-xl md:text-2xl text-jade tracking-wide mb-4">
                   {section.label}
                 </h3>
-                <div className="divider-gold mb-6" />
+                <div className="divider-gold mb-5" />
                 <ul className="space-y-3">
                   {section.items.map((item, i) => (
                     <li key={i} className="text-noir/60 text-sm leading-relaxed">
@@ -232,6 +236,7 @@ export function ArtistDetailClient({ artist }: { artist: Artist }) {
       <CTAStrip
         title={t('inquire')}
         primaryLink={{ href: '/contact', label: t('contactUs') }}
+        sectionClassName="py-12 md:py-16"
       />
     </div>
   );

@@ -2,6 +2,7 @@ import { db } from '@/lib/db-typed';
 import { notFound } from 'next/navigation';
 import { resolveTranslation } from '@/lib/i18n-content';
 import { ExhibitionViewClient } from '@/app/admin/(dashboard)/exhibitions/[id]/view/client';
+import { formatArtworkDimensions } from '@/lib/artwork-dimensions';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -49,7 +50,13 @@ export default async function ExhibitionPrintPage({ params }: Props) {
     artworks: exhibition.artworks.map((ew) => ({
       title: resolveTranslation(ew.artwork.title, 'fr'),
       medium: ew.artwork.medium ? resolveTranslation(ew.artwork.medium, 'fr') : null,
-      dimensions: ew.artwork.dimensions,
+      dimensions: formatArtworkDimensions({
+        ...ew.artwork,
+        widthCm: ew.artwork.widthCm ? Number(ew.artwork.widthCm) : null,
+        heightCm: ew.artwork.heightCm ? Number(ew.artwork.heightCm) : null,
+        diameterCm: ew.artwork.diameterCm ? Number(ew.artwork.diameterCm) : null,
+        depthCm: ew.artwork.depthCm ? Number(ew.artwork.depthCm) : null,
+      }, 'fr'),
       year: ew.artwork.year,
       imageUrl: ew.artwork.imageUrl,
       artistName: '',

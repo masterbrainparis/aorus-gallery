@@ -2,6 +2,7 @@ import { db } from '@/lib/db-typed';
 import { notFound } from 'next/navigation';
 import { resolveTranslation } from '@/lib/i18n-content';
 import { ExhibitionViewClient } from './client';
+import { formatArtworkDimensions } from '@/lib/artwork-dimensions';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -22,7 +23,19 @@ export default async function ExhibitionViewPage({ params }: Props) {
       artworks: {
         include: {
           artwork: {
-            select: { title: true, imageUrl: true, medium: true, dimensions: true, year: true, artist: { select: { name: true } } },
+            select: {
+              title: true,
+              imageUrl: true,
+              medium: true,
+              dimensions: true,
+              dimensionType: true,
+              widthCm: true,
+              heightCm: true,
+              diameterCm: true,
+              depthCm: true,
+              year: true,
+              artist: { select: { name: true } },
+            },
           },
         },
       },
@@ -74,7 +87,13 @@ export default async function ExhibitionViewPage({ params }: Props) {
       title: resolveTranslation(aw.artwork.title, 'fr'),
       imageUrl: aw.artwork.imageUrl,
       medium: aw.artwork.medium ? resolveTranslation(aw.artwork.medium, 'fr') : null,
-      dimensions: aw.artwork.dimensions,
+      dimensions: formatArtworkDimensions({
+        ...aw.artwork,
+        widthCm: aw.artwork.widthCm ? Number(aw.artwork.widthCm) : null,
+        heightCm: aw.artwork.heightCm ? Number(aw.artwork.heightCm) : null,
+        diameterCm: aw.artwork.diameterCm ? Number(aw.artwork.diameterCm) : null,
+        depthCm: aw.artwork.depthCm ? Number(aw.artwork.depthCm) : null,
+      }, 'fr'),
       year: aw.artwork.year,
       artistName: aw.artwork.artist.name,
     })),

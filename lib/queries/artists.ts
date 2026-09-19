@@ -2,6 +2,7 @@ import { db } from '@/lib/db-typed';
 import { resolveTranslation } from '@/lib/i18n-content';
 import { serializePrismaPage } from '@/lib/queries/serialize';
 import type { Locale } from '@/i18n/routing';
+import { formatArtworkDimensions } from '@/lib/artwork-dimensions';
 
 /** Format CV entries with year prefix, sorted by year descending */
 function formatCVEntries(
@@ -113,8 +114,15 @@ export async function getArtistBySlugForFrontend(slug: string, locale: Locale = 
       title: resolveTranslation(aw.title, locale),
       medium: aw.medium ? resolveTranslation(aw.medium, locale) : null,
       dimensions: aw.dimensions,
-      widthCm: aw.widthCm,
-      heightCm: aw.heightCm,
+      formattedDimensions: formatArtworkDimensions({
+        ...aw,
+        widthCm: aw.widthCm ? Number(aw.widthCm) : null,
+        heightCm: aw.heightCm ? Number(aw.heightCm) : null,
+        diameterCm: aw.diameterCm ? Number(aw.diameterCm) : null,
+        depthCm: aw.depthCm ? Number(aw.depthCm) : null,
+      }, locale),
+      widthCm: aw.widthCm ? Number(aw.widthCm) : null,
+      heightCm: aw.heightCm ? Number(aw.heightCm) : null,
       year: aw.year,
       showPrice: aw.showPrice,
       price: aw.price ? Number(aw.price) : null,

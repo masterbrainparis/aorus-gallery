@@ -5,34 +5,12 @@ import { Prisma } from '@prisma/client';
 import { requireAuth } from '@/lib/auth-utils';
 import { revalidateEntity } from '@/lib/actions/helpers';
 import { redirect } from 'next/navigation';
-import { z } from 'zod';
-import { translatableSchema, optionalTranslatableSchema, extractTranslatable, type TranslatableField } from '@/lib/i18n-content';
-import { httpsUrl, serializeTranslatable, booleanFromString, readDimension, readImagesMeta } from '@/lib/schemas/common';
+import { extractTranslatable, type TranslatableField } from '@/lib/i18n-content';
+import { serializeTranslatable, readDimension, readImagesMeta } from '@/lib/schemas/common';
 import { slugify } from '@/lib/slugify';
 import { parseFormData } from '@/lib/actions/safe-action';
-
-const artworkSchema = z.object({
-  title: translatableSchema,
-  artistId: z.string().min(1),
-  medium: optionalTranslatableSchema,
-  dimensions: z.string().max(200).optional().default(''),
-  widthCm: z.coerce.number().int().min(1).max(100000).optional().nullable(),
-  heightCm: z.coerce.number().int().min(1).max(100000).optional().nullable(),
-  year: z.coerce.number().int().min(0).optional().nullable(),
-  price: z.coerce.number().min(0).optional().nullable(),
-  currency: z.string().default('EUR'),
-  imageUrl: httpsUrl,
-  images: z.array(z.string().url()).optional().default([]),
-  visible: booleanFromString.default(true),
-  sortOrder: z.coerce.number().int().min(0).default(0),
-  featuredHome: booleanFromString.default(false),
-  showPrice: booleanFromString.default(false),
-  sold: booleanFromString.default(false),
-  reserved: booleanFromString.default(false),
-  // Internal admin fields (jamais exposés côté public)
-  countries: z.array(z.string().regex(/^[A-Z]{2}$/)).max(50).default([]),
-  internalNote: z.string().max(5000).optional().default(''),
-});
+import { normalizeArtworkStatusChange } from '@/lib/artwork-status';
+import { artworkSchema } from '@/lib/schemas/artwork';
 
 export async function createArtwork(formData: FormData): Promise<{ error: string } | void> {
   await requireAuth();
@@ -44,8 +22,11 @@ export async function createArtwork(formData: FormData): Promise<{ error: string
     artistId: formData.get('artistId')?.toString() ?? '',
     medium: extractTranslatable(formData, 'medium'),
     dimensions: formData.get('dimensions')?.toString() ?? '',
+    dimensionType: formData.get('dimensionType')?.toString() ?? 'UNCONFIRMED',
     widthCm: formData.get('widthCm')?.toString() ?? '',
     heightCm: formData.get('heightCm')?.toString() ?? '',
+    diameterCm: formData.get('diameterCm')?.toString() ?? '',
+    depthCm: formData.get('depthCm')?.toString() ?? '',
     year: formData.get('year')?.toString() ?? '',
     price: formData.get('price')?.toString() ?? '',
     currency: formData.get('currency')?.toString() ?? 'EUR',
@@ -57,12 +38,15 @@ export async function createArtwork(formData: FormData): Promise<{ error: string
     showPrice: formData.get('showPrice')?.toString() ?? 'false',
     sold: formData.get('sold')?.toString() ?? 'false',
     reserved: formData.get('reserved')?.toString() ?? 'false',
+    statusTouched: formData.get('statusTouched')?.toString() ?? 'true',
     countries: formData.getAll('countries').map((v) => v.toString()).filter(Boolean),
     internalNote: formData.get('internalNote')?.toString() ?? '',
   };
   const parsed = parseFormData(artworkSchema, raw);
   if (!parsed.success) return { error: parsed.error };
   const data = parsed.data;
+  const { statusTouched: _statusTouched, ...artworkData } = data;
+  void _statusTouched;
   const imageWidth = readDimension(formData, 'imageUrlWidth');
   const imageHeight = readDimension(formData, 'imageUrlHeight');
   const imagesMeta = readImagesMeta(formData, 'imagesMeta');
@@ -75,12 +59,14 @@ export async function createArtwork(formData: FormData): Promise<{ error: string
   try {
     const created = await db.artwork.create({
       data: {
-        ...data,
+        ...artworkData,
         slug,
         medium: serializeTranslatable(data.medium),
         dimensions: data.dimensions || null,
         widthCm: data.widthCm ?? null,
         heightCm: data.heightCm ?? null,
+        diameterCm: data.diameterCm ?? null,
+        depthCm: data.depthCm ?? null,
         price: data.price ?? null,
         year: data.year ?? null,
         imageWidth,
@@ -118,8 +104,11 @@ export async function updateArtwork(id: string, formData: FormData): Promise<{ e
     artistId: formData.get('artistId')?.toString() ?? '',
     medium: extractTranslatable(formData, 'medium'),
     dimensions: formData.get('dimensions')?.toString() ?? '',
+    dimensionType: formData.get('dimensionType')?.toString() ?? 'UNCONFIRMED',
     widthCm: formData.get('widthCm')?.toString() ?? '',
     heightCm: formData.get('heightCm')?.toString() ?? '',
+    diameterCm: formData.get('diameterCm')?.toString() ?? '',
+    depthCm: formData.get('depthCm')?.toString() ?? '',
     year: formData.get('year')?.toString() ?? '',
     price: formData.get('price')?.toString() ?? '',
     currency: formData.get('currency')?.toString() ?? 'EUR',
@@ -131,12 +120,15 @@ export async function updateArtwork(id: string, formData: FormData): Promise<{ e
     showPrice: formData.get('showPrice')?.toString() ?? 'false',
     sold: formData.get('sold')?.toString() ?? 'false',
     reserved: formData.get('reserved')?.toString() ?? 'false',
+    statusTouched: formData.get('statusTouched')?.toString() ?? 'false',
     countries: formData.getAll('countries').map((v) => v.toString()).filter(Boolean),
     internalNote: formData.get('internalNote')?.toString() ?? '',
   };
   const parsed = parseFormData(artworkSchema, raw);
   if (!parsed.success) return { error: parsed.error };
   const data = parsed.data;
+  const { statusTouched: _statusTouched, ...artworkData } = data;
+  void _statusTouched;
   const imageWidth = readDimension(formData, 'imageUrlWidth');
   const imageHeight = readDimension(formData, 'imageUrlHeight');
   const imagesMeta = readImagesMeta(formData, 'imagesMeta');
@@ -157,12 +149,14 @@ export async function updateArtwork(id: string, formData: FormData): Promise<{ e
     await db.artwork.update({
       where: { id },
       data: {
-        ...data,
+        ...artworkData,
         ...(newSlug ? { slug: newSlug } : {}),
         medium: serializeTranslatable(data.medium),
         dimensions: data.dimensions || null,
         widthCm: data.widthCm ?? null,
         heightCm: data.heightCm ?? null,
+        diameterCm: data.diameterCm ?? null,
+        depthCm: data.depthCm ?? null,
         price: data.price ?? null,
         year: data.year ?? null,
         imageWidth,
@@ -195,8 +189,14 @@ const ARTWORK_TOGGLE_FIELDS = ['visible', 'featuredHome', 'showPrice', 'sold', '
 export async function toggleArtworkField(id: string, field: 'visible' | 'featuredHome' | 'showPrice' | 'sold' | 'reserved'): Promise<{ error: string } | void> {
   await requireAuth();
   if (!(ARTWORK_TOGGLE_FIELDS as readonly string[]).includes(field)) throw new Error('Invalid field');
-  const current = await db.artwork.findUnique({ where: { id }, select: { [field]: true } });
+  const current = await db.artwork.findUnique({
+    where: { id },
+    select: { visible: true, featuredHome: true, showPrice: true, sold: true, reserved: true },
+  });
   if (!current) return { error: 'Élément introuvable' };
-  await db.artwork.update({ where: { id }, data: { [field]: !current[field] } });
+  const data = field === 'sold' || field === 'reserved'
+    ? normalizeArtworkStatusChange(current, field)
+    : { [field]: !current[field] };
+  await db.artwork.update({ where: { id }, data });
   revalidateEntity('/admin/artworks', ['/artists', '']);
 }

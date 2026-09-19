@@ -43,6 +43,15 @@ interface AdminTableProps<T> {
   itemsPerPage?: number;
   /** When provided, pagination is handled server-side via URL params */
   serverPagination?: ServerPaginationConfig;
+  serverSearch?: {
+    value: string;
+    onChange: (value: string) => void;
+  };
+  serverSort?: {
+    key: string;
+    direction: SortDir;
+    onChange: (key: string, direction: SortDir) => void;
+  };
 }
 
 type SortDir = 'asc' | 'desc';
@@ -61,6 +70,8 @@ export function AdminTable<T extends Record<string, unknown>>({
   extraActions,
   itemsPerPage = 10,
   serverPagination,
+  serverSearch,
+  serverSort,
 }: AdminTableProps<T>) {
   const t = useTranslations('admin.table');
   const searchParams = useSearchParams();
@@ -77,7 +88,13 @@ export function AdminTable<T extends Record<string, unknown>>({
     setClientPage(1);
   }
 
+  const queryValue = serverSearch?.value ?? query;
+  const activeSortKey = serverSort?.key ?? sortKey;
+  const activeSortDir = serverSort?.direction ?? sortDir;
+  const externallyControlled = Boolean(serverSearch || serverSort);
+
   const filtered = useMemo(() => {
+    if (externallyControlled) return data;
     if (!query.trim()) return data;
     const lower = query.toLowerCase();
     return data.filter((item) =>
@@ -95,10 +112,10 @@ export function AdminTable<T extends Record<string, unknown>>({
         return false;
       })
     );
-  }, [data, searchKeys, query]);
+  }, [data, externallyControlled, searchKeys, query]);
 
   const sorted = useMemo(() => {
-    if (!sortKey) return filtered;
+    if (externallyControlled || !sortKey) return filtered;
     const col = columns.find((c) => c.key === sortKey);
     if (!col?.getValue) return filtered;
     const getValue = col.getValue;
@@ -112,7 +129,7 @@ export function AdminTable<T extends Record<string, unknown>>({
       const bStr = String(bVal).toLowerCase();
       return sortDir === 'asc' ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr);
     });
-  }, [filtered, sortKey, sortDir, columns]);
+  }, [filtered, sortKey, sortDir, columns, externallyControlled]);
 
   // In server-side mode, data is already paginated — display all items passed in
   // In client-side mode, paginate locally
@@ -127,6 +144,13 @@ export function AdminTable<T extends Record<string, unknown>>({
   const totalItems = isServerSide ? serverPagination.totalItems : sorted.length;
 
   const handleSort = (key: string) => {
+    if (serverSort) {
+      serverSort.onChange(
+        key,
+        serverSort.key === key && serverSort.direction === 'asc' ? 'desc' : 'asc',
+      );
+      return;
+    }
     if (sortKey === key) {
       setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
     } else {
@@ -155,7 +179,11 @@ export function AdminTable<T extends Record<string, unknown>>({
         )}
       </div>
 
-      <AdminSearchInput value={query} onChange={setQuery} placeholder={searchPlaceholder ?? t('search')} />
+      <AdminSearchInput
+        value={queryValue}
+        onChange={serverSearch?.onChange ?? setQuery}
+        placeholder={searchPlaceholder ?? t('search')}
+      />
 
       <div className="rounded-lg border border-gray-200 bg-white overflow-x-auto -mx-4 sm:mx-0">
         <Table>
@@ -168,9 +196,12 @@ export function AdminTable<T extends Record<string, unknown>>({
                       type="button"
                       className="flex items-center gap-1 text-gray-500 hover:text-gray-900"
                       onClick={() => handleSort(col.key)}
+                      aria-pressed={activeSortKey === col.key}
                     >
                       {col.label}
-                      <ArrowUpDown className="h-3.5 w-3.5" />
+                      <ArrowUpDown
+                        className={`h-3.5 w-3.5 ${activeSortKey === col.key && activeSortDir === 'desc' ? 'rotate-180' : ''}`}
+                      />
                     </button>
                   ) : (
                     col.label

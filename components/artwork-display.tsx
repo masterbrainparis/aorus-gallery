@@ -44,6 +44,7 @@ export interface ArtworkMedia {
   /** Real-world dimensions in cm — used by ArtworkSalon for proportional scaling. */
   widthCm?: number | null;
   heightCm?: number | null;
+  dimensionsLabel?: string | null;
 }
 
 /** Classify ratio for surface-specific handling. */
@@ -484,7 +485,8 @@ interface ArtworkSalonCellProps {
 function ArtworkSalonCell({ item, priority }: ArtworkSalonCellProps) {
   const aspectRatio =
     item.imageWidth && item.imageHeight ? `${item.imageWidth} / ${item.imageHeight}` : '4 / 5';
-  const dimsCaption = item.widthCm && item.heightCm ? `${item.widthCm} × ${item.heightCm} cm` : null;
+  const dimsCaption = item.dimensionsLabel
+    ?? (item.widthCm && item.heightCm ? `${item.widthCm} × ${item.heightCm} cm` : null);
 
   return (
     <motion.figure
