@@ -74,7 +74,7 @@ export function HomePageClient({ featuredArtworks, featuredArtists, banner }: { 
           desktop réduite encore instable malgré clamp(vw)). Borne haute via
           `min()` pour cap desktop large. Carré 1:1 strict (aspect-square)
           → aucun reflow possible. */}
-      <section className="bg-blanc min-h-screen flex items-center justify-center relative">
+      <section className="bg-blanc min-h-[100svh] md:min-h-screen flex items-center justify-center relative overflow-x-clip">
         <div className="absolute inset-0">
           <div className="absolute inset-0 flex items-center justify-center">
             <Image
@@ -82,7 +82,7 @@ export function HomePageClient({ featuredArtworks, featuredArtists, banner }: { 
               alt=""
               width={720}
               height={720}
-              className="w-[min(70vmin,720px)] aspect-square opacity-[0.05] object-contain"
+              className="w-[min(78vw,70vh)] sm:w-[min(70vmin,720px)] aspect-square opacity-[0.05] object-contain"
               aria-hidden="true"
               priority
             />
@@ -92,7 +92,7 @@ export function HomePageClient({ featuredArtworks, featuredArtists, banner }: { 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-10 text-center px-6"
+          className="relative z-10 w-full max-w-[calc(100vw-2rem)] text-center px-2 sm:px-6"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -100,26 +100,26 @@ export function HomePageClient({ featuredArtworks, featuredArtists, banner }: { 
             transition={{ duration: 1, delay: 0.2 }}
             className="mb-12"
           >
-            <h1 className="font-display text-5xl md:text-7xl lg:text-8xl uppercase leading-none text-noir text-center">
-              <span className="tracking-[0.45em] block">ORUS</span>
-              <span className="tracking-[0.15em] block">GALLERY</span>
+            <h1 className="font-display text-[clamp(2.75rem,12vw,3rem)] sm:text-6xl md:text-7xl lg:text-8xl uppercase leading-none text-noir text-center">
+              <span className="tracking-[0.38em] sm:tracking-[0.45em] block">ORUS</span>
+              <span className="tracking-[0.1em] sm:tracking-[0.15em] block">GALLERY</span>
             </h1>
           </motion.div>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.6 }}
-            className="flex items-center justify-center gap-6 mb-10"
+            className="flex items-center justify-center gap-4 sm:gap-6 mb-8 sm:mb-10"
           >
-            <span className="font-display text-base md:text-lg tracking-[0.3em] uppercase text-noir">TAIPEI</span>
-            <div className="w-12 h-px bg-or" />
-            <span className="font-display text-base md:text-lg tracking-[0.3em] uppercase text-noir">PARIS</span>
+            <span className="font-display text-xs sm:text-base md:text-lg tracking-[0.24em] sm:tracking-[0.3em] uppercase text-noir">TAIPEI</span>
+            <div className="w-10 sm:w-12 h-px bg-or" />
+            <span className="font-display text-xs sm:text-base md:text-lg tracking-[0.24em] sm:tracking-[0.3em] uppercase text-noir">PARIS</span>
           </motion.div>
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.9 }}
-            className="text-noir/50 text-base md:text-lg tracking-[0.15em] uppercase"
+            className="text-noir/50 text-xs sm:text-base md:text-lg tracking-[0.12em] sm:tracking-[0.15em] uppercase"
           >
             {t('hero.tagline')}
           </motion.p>
