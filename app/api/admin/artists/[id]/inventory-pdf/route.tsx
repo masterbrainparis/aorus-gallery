@@ -7,6 +7,7 @@ import { ArtistInventoryPdf, type PdfArtwork } from '@/lib/pdf/artist-inventory-
 import { routing, type Locale } from '@/i18n/routing';
 import { headers } from 'next/headers';
 import { slugify } from '@/lib/slugify';
+import { preparePdfArtworkImages } from '@/lib/pdf/prepare-pdf-image';
 
 // Force Node runtime — @react-pdf/renderer ne tourne pas sur Edge.
 export const runtime = 'nodejs';
@@ -50,7 +51,7 @@ export async function GET(
     return new Response('Artist not found', { status: 404 });
   }
 
-  const artworks: PdfArtwork[] = artist.artworks.map((aw) => ({
+  const artworkRows: PdfArtwork[] = artist.artworks.map((aw) => ({
     id: aw.id,
     title: resolveTranslation(aw.title, locale),
     year: aw.year,
@@ -68,6 +69,10 @@ export async function GET(
     sold: aw.sold,
     reserved: aw.reserved,
   }));
+
+  // Admin uploads are stored as WebP. React PDF does not render WebP
+  // consistently, so prepare compact JPEG thumbnails before rendering.
+  const artworks = await preparePdfArtworkImages(artworkRows);
 
   const buffer = await renderToBuffer(
     <ArtistInventoryPdf
